@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<!-- 
+auth: github.com/liikii
+date: 2021.07.30
+version: 1.0
+©2021-2051 liikii. All rights reserved.
+代码版权归作者所有。 保留所有权利。
+ -->
+<html>
+<head>
+<style>
+
+    input[type="checkbox"]{
+        zoom: 150%;
+        vertical-align:middle;
+    }
+    label{
+        vertical-align:middle;
+    }
+
+
+    #upit {
+        margin-left: 100px;
+        margin-top: 20px;
+    }
+
+    .progress{
+        width: 250px;
+        height: 20px;
+    }
+
+    
+    .filenameclass {
+        font-size: 25px;
+    }
+
+    .filenameclass:hover {color:#FF00FF;}
+
+    .progress_grey{
+        /*height: 120px;*/
+        color:#000;
+        background-color:#f1f1f1;
+    }
+    .progress_blue{
+        /*text-align: center;*/
+        /*height: 120px;*/
+        font-family: "Times New Roman", Times, serif;
+        font-size: 40px;
+        text-align: right;
+        color:#fff;
+        background-color:#2196F3;
+    }
+
+    .hrstyle{
+        /*width:80%;*/
+        margin-top: 20px;
+        margin-bottom: 20px;
+        /*margin: 20px;*/
+        border: 20px;
+        height: 4px;
+        background: #333;
+        background-image: linear-gradient(to right, red, #333, rgb(9, 206, 91));
+    }
+
+
+    table {
+        width: 1400px;
+    }
+
+    th, td {
+        padding: 7px 10px 10px 10px;
+    }
+
+    th {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 90%;
+        border-bottom: 2px solid #111111;
+        border-top: 1px solid #999;
+        text-align: left;
+    }
+
+    tr.even {
+        background-color: #efefef;
+    }
+
+
+    tr:hover {
+        background-color: #c3e6e5;}
+        .money {
+        text-align: right;
+    }
+
+</style>
+<!-- WARNING: there need add global url. if change global_url -->
+<script src="/s/jquery.min.js"></script>
+<!-- WARNING: there need add global url. if change global_url -->
+<link rel="icon" href="/s/favicon.ico" type="image/x-icon">
+<script>
+    var global_url = ""
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        // console.log("hello jack");
+        // console.log(window.location.pathname);
+        $("#files").click(function(evt){
+            $('#blue_bar').text('');
+            $("#blue_bar").attr("style", "width:" + "0" + "%");
+        });
+
+        function up_file(evt){
+            $('#blue_bar').text('');
+            $('#blue_bar').css("height","50px");
+            $("#blue_bar").css("width", "0%");
+            var xhr = new XMLHttpRequest();
+            var data = new FormData();
+            var files = $("#files").get(0).files;
+            for (var i = 0; i < files.length; i++) {
+                data.append(files[i].name, files[i]);
+            };
+
+            xhr.upload.addEventListener("progress", function (event) {
+                // console.log(window.location.pathname);
+                
+                var percent = (event.loaded / event.total) * 100;
+                console.log(percent);
+                pcs = percent.toFixed(0)
+
+                            // $('#progress_grey').css("height","40px");
+                            // $('#blue_bar').css("height","40px");
+                if (pcs < 98) {
+                    $('#blue_bar').text(pcs);
+                    $("#blue_bar").css("width", pcs + '%');
+                }
+                
+                // if (pcs == 100) {
+                //     $('#blue_bar').text(" OK ");
+                // }
+                // $('#blue_bar').css("height","40px");
+                // $("#blue_bar").attr("style", "width:" + pcs + '%');
+            });
+
+            var pnm = window.location.pathname;
+            
+            if (pnm.startsWith(global_url)) {
+                pnm = pnm.slice(global_url.length)
+            };
+            var dp = encodeURIComponent(pnm);
+
+            xhr.open("POST", global_url + "/upload?a=" + dp);
+
+            xhr.onreadystatechange = function (oEvent) {
+                console.log(oEvent)
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log("ok ", xhr.responseText)
+                    } else {
+                        $('#blue_bar').text("upload error no permission. contact the administrator.上传出错 上传目录可能被管理员.");
+                        $("#blue_bar").css("width", "100%");
+                        $("#blue_bar").css("text-align", "left");
+                        // text-align: right;
+                        console.log("Error", xhr.statusText);
+                    }
+                }
+            };
+
+            xhr.onload = function() { console.log("Connected!"); }
+            xhr.onerror = function() { console.log("Not Connected"); }
+
+            xhr.send(data);
+
+            xhr.onload = function () {
+                console.log('DONE: ', xhr.status);
+                if (xhr.status != 200) {
+                    $('#blue_bar').text("upload error no permission. contact the administrator. 上传出错 请检查上传的目录配置");
+                    $("#blue_bar").css("width", "50%");
+                }else {
+                    $('#blue_bar').text("98");
+                    $("#blue_bar").css("width", '98%');
+                    $('#blue_bar').text("99");
+                    $("#blue_bar").css("width", '99%');
+                    $('#blue_bar').text("100");
+                    $("#blue_bar").css("width", '100%');
+                    
+                    setTimeout(() => { $('#blue_bar').text(" OK "); }, 500);
+                    setTimeout(() => { window.location.reload(); }, 1000);
+                }
+            };
+            evt.preventDefault();
+        }
+
+        $("#upit").click(function(evt) {
+
+            var pnm = window.location.pathname;
+
+            if (pnm.startsWith(global_url)) {
+                pnm = pnm.slice(global_url.length)
+            };
+            var dp = encodeURIComponent(pnm);
+            // console.log(evt);
+            var u = global_url + "/d5033c97b87fec3d5fab7341a3a4c88098a1989256c52e142fe2f0ad757e25978b81cd345e8ed8a3a66d1a32409cfcbb?a=" + dp;
+            $.get(u).done(function(dt, ss, xh) {
+                    console.log("check dir: ", xh.status);
+                    console.log("check dir evt: ", evt);
+                    up_file(evt);                
+            }).fail(function(xh) {
+                    $('#blue_bar').text("upload error no permission. contact the administrator. 上传出错 上传目录可能被管理员");
+                    $("#blue_bar").css("width", "100%");
+                    $("#blue_bar").css("text-align", "left");
+                    console.log("check dir error: ", xh.status);
+                }
+            );
+            evt.preventDefault();
+        });
+
+    }); 
+</script>
+<title>un upload</title>
+
+</head>
+<body>
+
+<br>
+<form action="/upload" method="post" enctype="multipart/form-data">
+  UPLOAD FILE: <input id='files' type="file" name="files" multiple/><br>
+  <input id='upit' type="submit" value='upload_file'>
+</form>
+
+<div class="progress_grey">
+  <div id='blue_bar' class="progress_blue" style="width:0%"></div>
+</div>
+
+<p><strong>注意:</strong> 不支持IE。NOT SUPPORTED IE. </p>
+
+ <hr class="hrstyle" />
+
+
+<!-- </body>
+</html>
+ -->

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!-- 
+auth: github.com/liikii
+date: 2021.07.30
+version: 1.0
+©2021-2051 liikii. All rights reserved.
+代码版权归作者所有。 保留所有权利。
+ -->
+<html>
+<head>
+<style>
+    .progress{
+        width: 250px;
+        height: 20px;
+    }
+
+    .progress_grey{
+        color:#000;
+        background-color:#f1f1f1;
+    }
+    .progress_blue{
+        /*text-align: center;*/
+        font-family: "Times New Roman", Times, serif;
+        text-align: right;
+        color:#fff;
+        background-color:#2196F3;
+    }
+
+    .hrstyle{
+        /*width:80%;*/
+        margin-top: 20px;
+        margin-bottom: 20px;
+        /*margin: 20px;*/
+        border: 20px;
+        height: 4px;
+        background: #333;
+        background-image: linear-gradient(to right, red, #333, rgb(9, 206, 91));
+    }
+
+
+</style>
+<script src="/s/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#files").click(function(evt){
+            $('#blue_bar').text('');
+            $("#blue_bar").attr("style", "width:" + "0" + "%");
+        });
+        $("#upit").click(function(evt){
+            $('#blue_bar').text('');
+            $("#blue_bar").attr("style", "width:" + "0" + "%");
+            var xhr = new XMLHttpRequest();
+            var data = new FormData();
+            var files = $("#files").get(0).files;
+            for (var i = 0; i < files.length; i++) {
+                data.append(files[i].name, files[i]);
+            };
+
+
+            xhr.upload.addEventListener("progress", function (event) {
+
+                var percent = (event.loaded / event.total) * 100;
+                console.log(percent);
+                pcs = percent.toFixed(0)
+                $('#blue_bar').text(pcs);
+                $("#blue_bar").attr("style", "width:" + pcs + '%');
+            });
+
+            xhr.open("POST", "/upload?haha=1234");
+            xhr.send(data);
+            evt.preventDefault();
+        });
+
+    }); 
+</script>
+<title>un upload</title>
+<link rel="icon" href="/s/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+
+<br>
+<form action="/up" method="post" enctype="multipart/form-data">
+  上传文件: <input id='files' type="file" name="files" multiple/>
+  <input id='upit' type="submit" value='上传'>
+</form>
+
+<div class="progress_grey">
+  <div id='blue_bar' class="progress_blue" style="width:0%"></div>
+</div>
+
+
+<!-- <p>请选择要上传的文件</p>
+<p><strong>注意:</strong> IE9及IE9以下， 不支持多文件</p>
+ -->
+ <hr class="hrstyle" />
+
+
+<!-- </body>
+</html>
+ -->
